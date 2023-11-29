@@ -9,6 +9,7 @@ extends Node
 
 func _ready():
 	$Timer.timeout.connect(_on_check_can_play)
+	
 	board_anim.board_size = board.board_size
 
 	board.block_moved.connect(   board_anim._on_block_moved   )

@@ -26,9 +26,9 @@ func _ready():
 var t = 0
 var index := 0:
 	set(val):
-		(get_child(index) as Block).selected = false
+		( get_child(index) as Block ).selected = false
 		index = val
-		(get_child(index) as Block).selected = true
+		( get_child(index) as Block ).selected = true
 		
 var base
 func _physics_process(delta: float) -> void:

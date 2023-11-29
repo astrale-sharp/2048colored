@@ -74,6 +74,7 @@ func random_populate():
 		
 
 func _on_move(direction : Vector2i):
+	# position of the cell we're trying to move
 	var pos : Vector2i
 	# continue aling this line
 	var line_step
@@ -85,7 +86,6 @@ func _on_move(direction : Vector2i):
 				and p.y <= board_size - 1 \
 				and p.x >= 0 \
 				and p.y >= 0 
-
 
 	# continue to next column, reset line
 	var col_step
@@ -99,7 +99,6 @@ func _on_move(direction : Vector2i):
 	var posy_eq_0 = func(position : Vector2i): return position.y == 0
 
 
-
 	match direction:
 		# if right, for each y, logic on x starting at max coord
 		Vector2i.LEFT:
@@ -110,7 +109,6 @@ func _on_move(direction : Vector2i):
 			
 			line_end_condition = posx_eq_max
 			col_condition = posy_eq_max
-			
 			
 		Vector2i.RIGHT:
 			pos = Vector2i(board_size - 1, 0)
@@ -139,31 +137,27 @@ func _on_move(direction : Vector2i):
 			line_end_condition = posy_eq_max
 			col_condition = posx_eq_max
 		
-		_:
+		_: 
 			printerr("invalid direction ignored: ", direction)
-
+			return
 	# we increment line until condition
 	# then column and reset line until column condition
-	# 
 	while not (col_condition.call(pos) and line_end_condition.call(pos)):
 		while not line_end_condition.call(pos):
 			pos += line_step
 			if _board_get(pos) == null:
 				continue
-			
+			# check positions to move the cell to
 			var cursor = pos - line_step
 			
 			while in_bounds.call(cursor):
-
 				var is_last = not in_bounds.call(cursor - line_step)
 				if  is_last and _board_get(cursor) == null:
 					board[cursor.x][cursor.y] = _board_get(pos)
 					board[pos.x][pos.y] = null
 					block_moved.emit(pos, cursor)
-
 					
 				elif _board_get(cursor) == null:
-#					print("pass: ", cursor)
 					pass
 
 				elif _board_get(cursor) != _board_get(pos): 
@@ -173,7 +167,7 @@ func _on_move(direction : Vector2i):
 						board[before.x][before.y] = _board_get(pos)
 						board[pos.x][pos.y] = null
 						block_moved.emit(pos, before)
-						if recursive: 
+						if recursive: # go to line start
 							while in_bounds.call(pos - line_step):
 								pos -= line_step
 					break
@@ -184,7 +178,7 @@ func _on_move(direction : Vector2i):
 					block_fused.emit(pos, cursor, board[cursor.x][cursor.y] + 1)
 					board[pos.x][pos.y] = null
 					board[cursor.x][cursor.y] += 1
-					if recursive: 
+					if recursive: # go to line start
 							while in_bounds.call(pos - line_step):
 								pos -= line_step
 					break

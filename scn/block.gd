@@ -11,11 +11,19 @@ var selected := false:
 		else:
 			#TODO deactivate shader
 			pass
+			
 func _ready():
 	scale = Vector2.ZERO
 	visible = true
 	if owner == null:
 		appear()
+		set_process_input(true)
+
+func _input(event):
+	if owner != null: return
+	if event is InputEventKey:
+		if event.keycode == KEY_L:
+			level_up()
 
 func appear():
 	create_tween() \

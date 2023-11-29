@@ -23,15 +23,9 @@ func get_wrapping_char(rest):
 	return CHARS[rest % CHARS.size() - 1]
 
 func get_char(i):
-	var rest = __wrap_level(i)
+	var rest = floori((i + 1) / COLORS.size())
 	if rest > 0: return get_wrapping_char(rest)
 	else: return ""
 
-func __wrap_level(level):
-	var i = 0
-	var val = level
-	while val >= 0:
-		i += 1
-		val = level - (COLORS.size() ) * i
-	return i - 1
 
+	
