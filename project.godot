@@ -18,14 +18,17 @@ boot_splash/bg_color=Color(0.141176, 0.141176, 0.141176, 1)
 [autoload]
 
 Constants="*res://AutoLoads/constants.tscn"
+InputManager="*res://CustomInputEvents/InputManager.gd"
 
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/handheld/orientation=1
 
 [rendering]
 
 renderer/rendering_method="mobile"
+renderer/rendering_method.mobile="gl_compatibility"
 renderer/rendering_method.web="mobile"
 textures/vram_compression/import_etc2_astc=true
