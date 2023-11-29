@@ -1,12 +1,17 @@
 [gd_scene load_steps=2 format=3 uid="uid://de66elsss73fw"]
 
-[ext_resource type="Script" path="res://board_anim.gd" id="1_g42g7"]
+[ext_resource type="Script" path="res://scn/board_anim.gd" id="1_amr1v"]
 
 [node name="BoardAnim" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 425.0
+offset_top = 159.0
+offset_right = -727.0
+offset_bottom = -489.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_g42g7")
+script = ExtResource("1_amr1v")
+board_size = 5

@@ -10,4 +10,22 @@ config_version=5
 
 [application]
 
+config/name="Colored2048"
+run/main_scene="res://scn/Main.tscn"
 config/features=PackedStringArray("4.1")
+boot_splash/bg_color=Color(0.141176, 0.141176, 0.141176, 1)
+
+[autoload]
+
+Constants="*res://AutoLoads/constants.tscn"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+
+[rendering]
+
+renderer/rendering_method="mobile"
+renderer/rendering_method.web="mobile"
+textures/vram_compression/import_etc2_astc=true

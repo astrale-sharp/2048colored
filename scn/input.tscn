@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://dayps41lgy2pm"]
+
+[ext_resource type="Script" path="res://scn/Input.gd" id="1_oxy3y"]
+
+[node name="Input" type="Node"]
+script = ExtResource("1_oxy3y")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
