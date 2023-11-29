@@ -2,14 +2,16 @@
 extends Control
 class_name BoardAnim
 
-var block = preload("res://scn/block.tscn")
+var block := preload("res://scn/block.tscn")
 
 @export var board_size : int
-var cell_size: float = 0.1 * ProjectSettings.get_setting("display/window/size/viewport_height") #64
+var cell_size: float = 0.15 * ProjectSettings.get_setting("display/window/size/viewport_width") if OS.get_name() == "Android" else 64
 const gap = Vector2.ONE * 20
 var board = {}
 
 func _ready():
+	position.x = ProjectSettings.get_setting("display/window/size/viewport_width") / 2 \
+				- ( board_size * cell_size + gap.x)/2
 	if owner == null:
 		board_size = 5
 		set_process_input(true)
@@ -39,7 +41,8 @@ func _draw():
 
 
 func _on_block_created(pos : Vector2i, level : int):
-	var b := block.instantiate()
+	var b := block.instantiate() as Block
+	b.size = Vector2(cell_size, cell_size)
 	b.level = level - 1
 	b.position = (pos * cell_size as Vector2) + gap / 2
 	board[pos] = b
