@@ -67,7 +67,7 @@ func random_populate():
 	for k in randi_range(1,2):
 		var pos = _get_available_tiles()
 		pos = pos.pick_random() if pos != [] else null
-		var level = randi_range(0,1)
+		var level = 0 if randf() <= 0.75 else 1
 		if pos is Vector2i:
 			board[pos.x][pos.y] = level
 			block_created.emit(pos, level)
