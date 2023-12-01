@@ -9,10 +9,8 @@ func _ready(): set_process_input(true)
 
 func _input(event):
 	if event is InputEventKey:
-		if (get_child(0) as Timer).is_stopped():
-			(get_child(0) as Timer).start()
-		else:
-			return
+		if not event.pressed: return
+			
 		match event.keycode:
 			KEY_LEFT:  move.emit(Vector2i.LEFT)
 			KEY_RIGHT: move.emit(Vector2i.RIGHT)
@@ -29,6 +27,7 @@ func _input(event):
 		move.emit(dir)
 		
 	if event is InputEventSingleScreenTouch:
+		if not event.pressed: return
 		var pos : Vector2 = event.position
 		var zero = get_viewport().get_visible_rect().size / 2
 		pos = pos - zero
