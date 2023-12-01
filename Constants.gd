@@ -10,9 +10,18 @@ extends Node
 	Color.CHOCOLATE, Color.CRIMSON, Color.DARK_RED, 
 	Color.DARK_GOLDENROD, Color.VIOLET, Color.DARK_VIOLET, 
 	Color.DARK_GREEN, Color.INDIGO,
-	]
+]
 
 var CHARS = ["𝛂", "𝜷", "𝛾", "Ѻ"]
+
+
+var SCREEN_SIZE := Vector2(
+		ProjectSettings.get_setting("display/window/size/viewport_width"),
+		ProjectSettings.get_setting("display/window/size/viewport_height"),
+)
+	
+var CELL_SIZE := 0.14 * SCREEN_SIZE.x
+
 
 
 

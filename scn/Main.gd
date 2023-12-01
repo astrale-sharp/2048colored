@@ -1,11 +1,20 @@
 extends Node
 
+##! Main script connecting all the nodes and handling the connection
+##! between input logic and board logic
+##!
+##! Also handles some layouting logic
+
+
 @onready var board = $Board as Board
 @onready var board_anim = $BoardAnim as BoardAnim
 @onready var input := $Input as InputHandler
 @onready var score := $Score as Score 
 @onready var wheel := $Wheel as Wheel
 
+## On this signal being emitted, will wait to receive
+## responsed in _on_game_over_animation_done
+## When all answers are received, end game
 signal game_over_animation_start
 
 func _ready():
@@ -15,21 +24,16 @@ func _ready():
 	
 	
 	### LAYOUT
-	var screen_size = Vector2(
-		ProjectSettings.get_setting("display/window/size/viewport_width"),
-		ProjectSettings.get_setting("display/window/size/viewport_height"),
-	)
+	var board_anim_size = board.board_size * Constants.CELL_SIZE + board_anim.gap.x
 	
-	var cell_size = 0.1 * screen_size.x #if OS.get_name() == "Android" else 64.0
-	var board_anim_size = board.board_size * cell_size + board_anim.gap.x
+	board_anim.cell_size = Constants.CELL_SIZE
 	
-	board_anim.cell_size = cell_size
-	
-	board_anim.position.x = screen_size.x / 2 - board_anim_size / 2
-	board_anim.position.y = screen_size.y * 0.1
-	
-	wheel.position.x = screen_size.x * 0.05
-	wheel.position.y = board_anim.position.y + board_anim_size + screen_size.y * 0.05
+	board_anim.position.x = Constants.SCREEN_SIZE.x / 2 - board_anim_size / 2
+	board_anim.position.y = Constants.SCREEN_SIZE.y * 0.1
+
+	wheel.position.x = Constants.SCREEN_SIZE.x/2 - wheel.total_width/2 - Constants.CELL_SIZE/ 2
+	wheel.position.y = board_anim.position.y + board_anim_size + Constants.SCREEN_SIZE.y * 0.05
+
 	### SIGNAL CONNECTION
 	board.block_moved.connect(   board_anim._on_block_moved   )
 	board.block_fused.connect(   board_anim._on_block_fused   )
@@ -88,6 +92,7 @@ func _on_game_over_animation_done():
 
 
 func _input(event):
+	# skip game_over animation
 	if game_over_animation_started:
 		if event is InputEventSingleScreenLongPress\
 			or event is InputEventMultiScreenLongPress\

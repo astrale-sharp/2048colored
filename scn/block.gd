@@ -5,9 +5,13 @@ class_name Block
 
 signal animation_finished
 
+
 var level : int = 0
+
+# used to highlight this specific block with a shader effect
 var selected := false:
 	set(val):
+		if selected == val: return
 		selected = val
 		if selected:
 			#TODO activate shader
@@ -19,18 +23,18 @@ var selected := false:
 func _ready():
 	scale = Vector2.ZERO
 	visible = true
-	if owner == null:
-		appear()
-		set_process_input(true)
+	### TEST ONLY
+	appear()
+	return 
+	set_process_input(true)
+
+### ANIMATIONS
+
 
 func game_over():
-	var deathT := randf_range(0.10,0.25)
-	var speed := randf_range(1,3) * 130
 	var start_time := randf_range(0,0.3)
 	
-	var T = ProjectSettings.get_setting("display/window/size/viewport_height")/speed
-	var dir = Vector2.UP if randf() > 0.5 else Vector2.DOWN
-	
+	var dir = [Vector2.UP,Vector2.DOWN,Vector2.RIGHT,Vector2.LEFT].pick_random()
 	
 	await get_tree().create_timer(randf_range(1.5,2)).timeout
 	
@@ -76,17 +80,19 @@ func move_to(pos : Vector2):
 		.set_trans(Tween.TRANS_BACK) \
 		.tween_property(self,"position", pos, 0.7) 
 	
+# This animation frees the node
 func fade_out(t = create_tween()):
 	z_index = - 5
 	
 	t.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)\
 	 .tween_property(self,"modulate:a", 0, 0.2)
-	
 	t.tween_callback(queue_free)
 	
+var __cache = []
 ## caches all the future shards so that it computes easy
 ## Should be called when self is at position 0 0
-var __cache = []
+##
+## Reduces the lag on android
 func __prepare_fracture():
 	var pf := PolygonFracture.new()
 	var rect : Rect2 = self.get_rect() as Rect2
@@ -111,7 +117,8 @@ func __prepare_fracture():
 		var pp =  Polygon2D.new()
 		p.polygon = shape
 		pp.polygon = shape
-		pp.color = color
+		pp.color = Color.BLACK
+		#pp.color = color
 		rb.add_child(p)
 		rb.add_child(pp)
 		rb.gravity_scale = 0.1
@@ -119,9 +126,9 @@ func __prepare_fracture():
 		rb.collision_layer = 0
 		__cache.push_back(rb)
 
+## Frees the Block
 func fracture(used_cache = false):
 	if __cache == []: __prepare_fracture()
-	
 	for rb in __cache:
 		if used_cache: rb.position += position
 		get_parent().add_child(rb)
@@ -131,16 +138,13 @@ func fracture(used_cache = false):
 	
 func level_up():
 	level += 1
-	
-	# color
 	var next_color = Constants.get_wrapping_color(level)
 	$Label.text = Constants.get_char(level)
 	create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT) \
 				  .tween_property(self, "color", next_color, 0.7)
 
-
-
 ### TEST ONLY
+
 func _input(event):
 	return
 	print("test mode")

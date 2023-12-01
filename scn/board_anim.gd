@@ -11,17 +11,17 @@ var block := preload("res://scn/block.tscn")
 
 @export var board_size : int
 
-var board = {}
+var board = {} # Vector2 -> Block
 var cell_size: float
 const gap = Vector2.ONE * 20
 
 func _ready():
-	if owner == null:
-		board_size = 5
-		set_process_input(true)
-	else:
-		set_process_input(false)
+	set_process_input(false)
 	if not board_size: printerr("board_size not defined")
+	### TEST ONLY
+	return
+	board_size = 5
+	set_process_input(true)
 
 
 func _draw():
@@ -54,16 +54,19 @@ func _on_block_fused(start : Vector2i, end: Vector2i, level):
 	sblock.fade_out()
 	(board[end] as Block).level_up()
 
-var i 
+
 func _on_game_over_animation_start():
-	#await get_tree().create_timer(1.2).timeout
-	i = get_child_count()
+	
+	# counter to keep all the blocks accounted for before 
+	# emiting animation_finished.
+	# Why an Array? Hack to get local variable capture in gdscript
+	var i = [get_child_count()]
 	for c in get_children():
 		c = c as Block
 		c.animation_finished.connect(
 			func (): 
-				i -= 1
-				if i == 0: animation_finished.emit()
+				i[0] -= 1
+				if i[0] == 0: animation_finished.emit()
 		)
 		c.game_over()
 

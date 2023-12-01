@@ -1,6 +1,7 @@
 extends Node
 class_name InputHandler
-# KeyBoard input and Smartphone input are supported
+
+##! KeyBoard input and Smartphone input are supported
 
 @onready var timer = $Timer as Timer
 

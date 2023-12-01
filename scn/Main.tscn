@@ -34,7 +34,7 @@ offset_left = 26.0
 offset_top = 27.0
 offset_right = 82.0
 offset_bottom = 53.0
-text = "Score : "
+text = "Score: "
 script = ExtResource("5_1cs4r")
 
 [node name="Wheel" parent="." instance=ExtResource("6_se5is")]

@@ -1,58 +1,39 @@
 extends Node
 class_name Board
-# This script deals with the board logic
+##! This script deals with the board logic
+##! and is capable of moving the blocks  with the logic from _on_move
 
 @export var board_size = 4
+
+## merge blocks more agressively
 @export var recursive := true
 
 signal block_moved(from : Vector2i, to : Vector2i)
 signal block_fused(from : Vector2i, to : Vector2i, level_reached)
 signal block_created( pos : Vector2i, level : int)
 
-# board[x][y] = null | int
+## reprensents
+## board[x][y] = null | int
 var board := {}
 
 func _ready():
+	## INIT SELF
 	for x in range(board_size):
 		board[x] = {}
 		for y in range(board_size):
 			board[x][y] = null
-			
-	if owner == null:
-		var t = Timer.new()
-		t.wait_time = 0.7
-		t.one_shot = true
-		add_child(t)
-		set_process_input(true)
-		random_populate()
-		pprint()
-	
-func _input(event):
-	if owner == null:
-		if event is InputEventKey:
-			if (get_child(0) as Timer).is_stopped():
-				(get_child(0) as Timer).start()
-			else:
-#				print("time out")r
-				return
-			match event.keycode:
-				KEY_R: 
-					random_populate()
-					pprint()
-				KEY_LEFT:  
-					_on_move(Vector2i.LEFT)
-					pprint()
-				KEY_RIGHT:
-					_on_move(Vector2i.RIGHT)
-					pprint()
-				KEY_DOWN: 
-					_on_move(Vector2i.DOWN)
-					pprint()
-				KEY_UP:
-					_on_move(Vector2i.UP)
-					pprint()
 
-func _board_get(pos : Vector2i):
+	### TEST ONLY
+	return
+	var t = Timer.new()
+	t.wait_time = 0.7
+	t.one_shot = true
+	add_child(t)
+	set_process_input(true)
+	random_populate()
+	pprint()
+
+func _board_get(pos : Vector2i): # -> int | null
 	return board[pos.x][pos.y]
 
 func _get_available_tiles() -> Array:
@@ -63,6 +44,7 @@ func _get_available_tiles() -> Array:
 				res.push_back(Vector2i(x,y))
 	return res
 
+## Adds one or two block of level 1 or (less likely) 2.
 func random_populate():
 	for k in randi_range(1,2):
 		var pos = _get_available_tiles()
@@ -72,15 +54,17 @@ func random_populate():
 			board[pos.x][pos.y] = level
 			block_created.emit(pos, level)
 		
-
+## Core algorithm
+## Abstract over the concept of line and column for each direction
 func _on_move(direction : Vector2i):
 	# position of the cell we're trying to move
 	var pos : Vector2i
 	# continue aling this line
-	var line_step
-	# this line is over
-	var line_end_condition
-	# this line is just started
+	var line_step : Vector2i
+	# the line is over
+	var line_end_condition : Callable
+
+	# the vector is is bounds
 	var in_bounds := func(p : Vector2i): 
 		return p.x <= board_size - 1 \
 				and p.y <= board_size - 1 \
@@ -88,10 +72,11 @@ func _on_move(direction : Vector2i):
 				and p.y >= 0 
 
 	# continue to next column, reset line
-	var col_step
-	#the columns are over
-	var col_condition
+	var col_step: Callable
+	# the column is over
+	var col_condition: Callable
 	
+	#-- utility functions --#
 	var posx_eq_max := func(position : Vector2i): return position.x == board_size - 1
 	var posx_eq_0 := func(position : Vector2i): return position.x == 0
 	
@@ -100,7 +85,6 @@ func _on_move(direction : Vector2i):
 
 
 	match direction:
-		# if right, for each y, logic on x starting at max coord
 		Vector2i.LEFT:
 			pos = Vector2i.ZERO
 			
@@ -144,10 +128,11 @@ func _on_move(direction : Vector2i):
 	# then column and reset line until column condition
 	while not (col_condition.call(pos) and line_end_condition.call(pos)):
 		while not line_end_condition.call(pos):
-			pos += line_step
+			pos += line_step # it's okay to skip the first position of each line 
+							#  since there's nowhere to move or merge
 			if _board_get(pos) == null:
 				continue
-			# check positions to move the cell to
+			# check positions to move the cell to/ merge the cell with
 			var cursor = pos - line_step
 			
 			while in_bounds.call(cursor):
@@ -211,4 +196,30 @@ func pprint():
 			t += str(board[x][y] if board[x][y] != null else "_") + " "
 		t += "\n"
 	print(t)
+
+### TEST ONLY
+func _input(event):
+	return
+	if event is InputEventKey:
+		if (get_child(0) as Timer).is_stopped():
+			(get_child(0) as Timer).start()
+		else:
+#				print("time out")r
+			return
+		match event.keycode:
+			KEY_R: 
+				random_populate()
+				pprint()
+			KEY_LEFT:  
+				_on_move(Vector2i.LEFT)
+				pprint()
+			KEY_RIGHT:
+				_on_move(Vector2i.RIGHT)
+				pprint()
+			KEY_DOWN: 
+				_on_move(Vector2i.DOWN)
+				pprint()
+			KEY_UP:
+				_on_move(Vector2i.UP)
+				pprint()
 
