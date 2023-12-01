@@ -26,6 +26,10 @@ window/size/viewport_width=720
 window/size/viewport_height=1280
 window/handheld/orientation=1
 
+[editor]
+
+movie_writer/movie_file="/home/astrale/Coding/godot/movies/2048.avi"
+
 [rendering]
 
 renderer/rendering_method="mobile"
