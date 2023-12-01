@@ -1,12 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://bw4hb7wwm3aqv"]
+[gd_scene load_steps=7 format=3 uid="uid://bw4hb7wwm3aqv"]
 
 [ext_resource type="Script" path="res://scn/Main.gd" id="1_6dje7"]
 [ext_resource type="PackedScene" uid="uid://dlcepbc6sf1u6" path="res://scn/board.tscn" id="1_cwkcr"]
 [ext_resource type="PackedScene" uid="uid://de66elsss73fw" path="res://scn/board_anim.tscn" id="2_of0py"]
 [ext_resource type="PackedScene" uid="uid://dayps41lgy2pm" path="res://scn/input.tscn" id="4_4d1rl"]
 [ext_resource type="Script" path="res://scn/Score.gd" id="5_1cs4r"]
-[ext_resource type="Script" path="res://scn/Wheel.gd" id="6_bow42"]
-[ext_resource type="Texture2D" uid="uid://c1vilm1etx345" path="res://assets/arrow.png" id="7_h27yp"]
+[ext_resource type="PackedScene" uid="uid://bsyiasr72y217" path="res://scn/wheel.tscn" id="6_se5is"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_6dje7")
@@ -38,60 +37,8 @@ offset_bottom = 53.0
 text = "Score : "
 script = ExtResource("5_1cs4r")
 
-[node name="Wheel" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 347.0
-offset_top = 420.0
-offset_right = 347.0
-offset_bottom = 420.0
-script = ExtResource("6_bow42")
-heigth_per_block = 44
+[node name="Wheel" parent="." instance=ExtResource("6_se5is")]
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.6
 one_shot = true
-
-[node name="UpButton" type="TextureButton" parent="."]
-visible = false
-offset_left = 293.0
-offset_top = 22.0
-offset_right = 441.0
-offset_bottom = 93.0
-texture_normal = ExtResource("7_h27yp")
-ignore_texture_size = true
-stretch_mode = 4
-
-[node name="RightButton" type="TextureButton" parent="."]
-visible = false
-offset_left = 698.0
-offset_top = 301.0
-offset_right = 846.0
-offset_bottom = 372.0
-rotation = 1.5708
-texture_normal = ExtResource("7_h27yp")
-ignore_texture_size = true
-stretch_mode = 4
-
-[node name="LeftButton" type="TextureButton" parent="."]
-visible = false
-offset_left = 85.0
-offset_top = 301.0
-offset_right = 233.0
-offset_bottom = 372.0
-rotation = 1.5708
-texture_normal = ExtResource("7_h27yp")
-ignore_texture_size = true
-stretch_mode = 4
-flip_v = true
-
-[node name="DownButton" type="TextureButton" parent="."]
-visible = false
-offset_left = 293.0
-offset_top = 607.0
-offset_right = 441.0
-offset_bottom = 678.0
-texture_normal = ExtResource("7_h27yp")
-ignore_texture_size = true
-stretch_mode = 4
-flip_v = true
