@@ -6,7 +6,7 @@ signal animation_finished
 # amplitude of circular movements
 @export var amplitude = 10
 # gap between blocks of the wheel
-@export var gap_per_block:= Vector2(Constants.CELL_SIZE * 0.8, 80)
+@export var gap_per_block:= Vector2(Constants.CELL_SIZE * 0.8, Constants.CELL_SIZE * 1.2)
 
 @export var animation_on := true
 
