@@ -6,6 +6,7 @@ extends Node
 @onready var score := $Score as Score 
 @onready var wheel := $Wheel as Wheel
 
+signal game_over_animation_start
 
 func _ready():
 	### SELF INIT
@@ -40,7 +41,28 @@ func _ready():
 
 	board.block_created.connect( func(_x,level):     wheel._on_level_appear(level)   )
 	board.block_fused.connect(   func(_x, _y , level): wheel._on_level_appear(level) )
+
+	### GAME OVER ANIMATION HANDLING
 	
+	# disconnect input	
+	game_over_animation_start.connect( 
+		func(): input.move.disconnect(input.move.get_connections().pop_back()["callable"]),
+		CONNECT_ONE_SHOT,
+	)
+	
+	
+	game_over_animation_start.connect( wheel._on_game_over_animation_start     , CONNECT_ONE_SHOT )
+	game_over_animation_start.connect( board_anim._on_game_over_animation_start, CONNECT_ONE_SHOT )
+	
+	wheel.animation_finished.connect(      func(): 
+												wheel_anim_game_over_done = true; 
+												_on_game_over_animation_done(),
+											CONNECT_ONE_SHOT)
+	board_anim.animation_finished.connect( func(): 
+												board_anim_game_over_done = true; 
+												_on_game_over_animation_done(),
+											CONNECT_ONE_SHOT)
+	### START GAME
 	board.random_populate()
 	
 func _on_move(dir : Vector2i):
@@ -48,11 +70,34 @@ func _on_move(dir : Vector2i):
 		board._on_move(dir)
 		board.random_populate()
 		$Timer.start()
-	# TODO check defeat
 
 func _on_check_can_play():
 	if board.no_move_left():
-		print("game over!!!")
-		# todo real game over and animations
-		get_tree().create_timer(3.5).timeout.connect(func(): get_tree().change_scene_to_file("res://scn/Main.tscn"))
-		
+		game_over_animation_started = true
+		await get_tree().create_timer(1.2).timeout
+		game_over_animation_start.emit()
+		# We then wait each animation to be finished in _on_game_over_animation_done()
+
+var game_over_animation_started := false
+var board_anim_game_over_done := false
+var wheel_anim_game_over_done := false
+func _on_game_over_animation_done():
+	if board_anim_game_over_done and wheel_anim_game_over_done:
+		# TODO, save a picture of the board? the high score
+		get_tree().change_scene_to_file("res://scn/Main.tscn")
+
+
+func _input(event):
+	if game_over_animation_started:
+		if event is InputEventSingleScreenLongPress\
+			or event is InputEventMultiScreenLongPress\
+			or (event is InputEventKey and event.pressed and event.keycode == KEY_ENTER) :
+				get_tree().change_scene_to_file("res://scn/Main.tscn")
+	
+	### TEST only
+	return
+	if event is InputEventKey:
+		if not event.pressed: return
+		if event.keycode == KEY_G:
+			game_over_animation_started = true
+			game_over_animation_start.emit()
