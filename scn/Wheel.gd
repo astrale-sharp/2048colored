@@ -65,7 +65,7 @@ func _on_game_over_animation_start():
 	for c in get_children():
 		var b: Block = c as Block
 		b.fracture(true)
-	await get_tree().create_timer(3).timeout
+	await get_tree().create_timer(4.0 + randf_range(0,2) ).timeout
 	animation_finished.emit()
 
 # this is symbolically the time that has passed
