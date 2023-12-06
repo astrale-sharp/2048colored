@@ -28,8 +28,11 @@ func _ready():
 	return 
 	set_process_input(true)
 
-### ANIMATIONS
+func _draw():
+	draw_rect(Rect2(Vector2.ZERO,size), Color.BLACK, false, 1.0)
 
+
+### ANIMATIONS
 
 func game_over():
 	var start_time := randf_range(0,0.3)
