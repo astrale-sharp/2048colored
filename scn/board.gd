@@ -7,6 +7,7 @@ class_name Board
 
 ## merge blocks more agressively
 @export var recursive := true
+@export var double_chance := 0.25
 
 signal block_moved(from : Vector2i, to : Vector2i)
 signal block_fused(from : Vector2i, to : Vector2i, level_reached)
@@ -46,7 +47,8 @@ func _get_available_tiles() -> Array:
 
 ## Adds one or two block of level 1 or (less likely) 2.
 func random_populate():
-	for k in randi_range(1,2):
+	var number = 1 if randf() >= double_chance else 2
+	for k in range(number):
 		var pos = _get_available_tiles()
 		pos = pos.pick_random() if pos != [] else null
 		var level = 0 if randf() <= 0.75 else 1
